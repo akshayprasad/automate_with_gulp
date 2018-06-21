@@ -40,4 +40,8 @@
 			<p><b>node -v //Check in the command prompt.</b></p>
 		<p>If not download from here: <a href="https://nodejs.org/en/download/"> Node download</a></p>
 	</li>
+	<li>
+		Install gulp and type this command in the command prompt.
+		<p>npm install -g gulp</p>
+	</li>
 </ol>
