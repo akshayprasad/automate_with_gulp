@@ -203,3 +203,232 @@ Now look at the <b>index.html</b> of <b>tmp</b> folder. The links are added auto
 	  </body>
 	</html>
 ```
+
+
+## Serve the development web server
+
+```js
+
+	// To install gulp-webserver plugin
+	npm install gulp-webserver --save-dev
+
+```
+
+<p>This is a Gulp plug-in which allows you to run a web server on your local machine.</p>
+
+```js
+
+	//require this in the top of gulpfile.js
+	var webserver = require('gulp-webserver');
+
+```
+
+```js
+
+	//Add the task in the gulpfile.js
+
+	gulp.task('serve', ['inject'], function () {
+  		return gulp.src(paths.tmp)
+    		.pipe(webserver({
+      			port: 3000,
+      			livereload: true
+    		}));
+	});
+
+```
+
+<p>Once again you need to include a dependency. Here you want the <b>‘inject’</b> task to finish before running the web server. Simply reference the <b>tmp</b> directory and <b>.pipe()</b> it to the web server. The <b>gulp-webserver</b> plug-in takes an options object as a parameter. You will need to specify the port on which it will run, and tell the server to reload if it senses any changes. Once you get used to this. There’s no going back.</p>
+
+### Add some lines of code to the files in the src directory. 
+
+<b>index.html</b>
+
+```js
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- inject:css -->
+    <!-- endinject -->
+  </head>
+  <body>
+    <div class="gulpBasic">This is gulp task!!!</div>
+
+    <!-- inject:js -->
+    <!-- endinject -->
+  </body>
+</html>
+
+```
+
+<b>style.css</b>
+
+```js
+
+.gulpBasic {
+  color: red;
+}
+
+```
+
+<b>script.js</b>
+
+```js
+
+console.log('This is gulp task!');
+
+```
+
+
+### Run the task with serve command
+
+```js
+	 
+	 gulp serve
+
+	 Access with 'localhost:3000'
+
+```
+
+
+## Watch for changes
+
+<P>Watching for changes means Gulp will constantly be checking for changes among your files. You only have to specify which files it has to watch.</P>
+
+```js
+
+	gulp.task('watch', ['serve'], function () {
+  		gulp.watch(paths.src, ['inject']);
+	});
+
+```
+
+<p>The <b>‘watch’</b> task will first wait for the <b>‘serve’</b> task to finish, only then will it start the watching. You tell Gulp to watch the files in the <b>src</b> directory. If it senses any changes it will fire the <b>‘inject’</b> Gulp task. Now whenever you save the changes in any of the specified files, Gulp will fire the <b>‘inject’</b> task. You can even go ahead and link the <b>‘watch’</b> task to the default task.</p>
+
+```js
+	
+	gulp.task('default', ['watch']);
+
+```
+
+## Building the dist
+
+With the development environment up and running you’ve come to the point where you want to pack up your files to make them ready for production. Here’s where Gulp really flexes its muscles. Go ahead and install the following Gulp plug-ins.
+
+```js
+
+	npm install gulp-htmlclean --save-dev
+	npm install gulp-clean-css --save-dev
+	npm install gulp-concat --save-dev
+	npm install gulp-uglify --save-dev
+
+```
+
+<p>And require them at the top of the <b>gulpfile.js</b>.</p>
+
+```js
+
+	var htmlclean = require('gulp-htmlclean');
+	var cleanCSS = require('gulp-clean-css');
+	var concat = require('gulp-concat');
+	var uglify = require('gulp-uglify');
+
+```
+
+<p>You can now re-use the majority of the already written tasks to create the build tasks.</p>
+
+```js
+
+gulp.task('html:dist', function () {
+  return gulp.src(paths.srcHTML)
+    .pipe(htmlclean())
+    .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('css:dist', function () {
+  return gulp.src(paths.srcCSS)
+    .pipe(concat('style.min.css'))
+    .pipe(cleanCSS())
+    .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('js:dist', function () {
+  return gulp.src(paths.srcJS)
+    .pipe(concat('script.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('copy:dist', ['html:dist', 'css:dist', 'js:dist']);
+
+gulp.task('inject:dist', ['copy:dist'], function () {
+  var css = gulp.src(paths.distCSS);
+  var js = gulp.src(paths.distJS);
+  return gulp.src(paths.distIndex)
+    .pipe(inject( css, { relative:true } ))
+    .pipe(inject( js, { relative:true } ))
+    .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('build', ['inject:dist']);
+
+```
+
+The added plug-ins are piped between the <b>gulp.src</b> and <b>gulp.dest</b> commands. Everything else remains the same.
+
+```js
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--[htmlclean-protect]-->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!--[/htmlclean-protect]-->
+  </head>
+  <body>
+    <div class="gulpBasic">This is gulp task!!!</div>
+
+    <!--[htmlclean-protect]-->
+    <!-- inject:js -->
+    <!-- endinject -->
+    <!--[/htmlclean-protect]-->
+</body>
+</html>
+
+```
+
+<p>run the <b>‘build’</b> task.</p>
+
+```js
+
+	gulp build
+
+```
+
+Take a look at your project folder. You can now see a <b>dist</b> folder. The files within have been concatenated and minified.
+
+
+## Cleaning up
+
+It’s not considered good practice to pass the <b>tmp</b> and <b>dist</b> folders to GitHub or any version control. 
+You will need a way to delete them without any problem.
+
+```js
+
+	npm install del --save-dev
+
+	//Add the plugin to the gulpfile.hs
+	var del = require('del');
+
+	//And add this snippet of code in gulpfile.js
+	gulp.task('clean', function () {
+  		del([paths.tmp, paths.dist]);
+	});
+
+```
+
+<p>The <b>tmp</b> and <b>dist</b> folders have been deleted!</p>
+
+<p>Another good practice is to add the <b>tmp</b> and <b>dist</b> files path in the <b>.gitignore</b> file.</p>
+
