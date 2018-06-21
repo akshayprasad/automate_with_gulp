@@ -37,11 +37,7 @@
 ## Tools required:
 <ol>
 	<li> <b>Node</b> has to be installed in the user machine. 
-		
-		```js
-			node -v //Check in the command prompt.
-		```
-
+			<b>node -v //Check in the command prompt.</b>
 		If not download from here: <a href="https://nodejs.org/en/download/"> Node download</a>
 	</li>
 </ol>
