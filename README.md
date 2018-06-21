@@ -20,7 +20,7 @@
 
 ## Key features:
 
-<ol>
+<ol style="line-height: 2.5">
 	<li>Three main Gulp commands: <b>gulp.task</b>, <b>gulp.src</b>, <b>gulp.dest</b>.</li>
 	<li>The <b>pipe()</b> method is built into Node.js and is used to copy files from one folder to another.</li>
 	<li>Have a logical folder structure, with three main folders. The <b>src</b> folder for pre-processed files, <b>tmp</b> for the local development server and <b>dist</b> for processed and minified files.</li>
@@ -31,4 +31,17 @@
 	<li>While the server is running you <b>‘watch’</b> for changes, and enable live reloading on the local development server.</li>
 	<li>If you feel code is fine, <b>'build'</b> the production files and place them in <b>dist</b> directory</li>
 	<li>Delete tmp and dist before pushing to GitHub. (Or just add them to your .gitignore)</li>
+</ol>
+
+
+## Tools required:
+<ol>
+	<li> <b>Node</b> has to be installed in the user machine. 
+		
+		```js
+			node -v //Check in the command prompt.
+		```
+
+		If not download from here: <a href="https://nodejs.org/en/download/"> Node download</a>
+	</li>
 </ol>
