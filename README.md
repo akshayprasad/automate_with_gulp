@@ -42,6 +42,34 @@
 	</li>
 	<li>
 		Install gulp and type this command in the command prompt.
-		<p>npm install -g gulp</p>
+		<p><b>npm install -g gulp</b></p>
 	</li>
 </ol>
+
+## steps to follow:
+
+<p>As Gulp is a package on npm you will need to initialize <b>npm</b> to have a link to the package manager.</p>
+<p>To know more about <b>npm — the Node Package Manager</b> please refer this link <a href="https://www.npmjs.com/">npm</a></p>
+
+<p>Now you need to install the gulp locally, as it runs the local version in the project folders.</p>
+
+```js
+	npm init
+	npm install gulp --save-dev
+```
+
+Installing it with the <b>--save-dev</b> flag will include it in the <b>package.json</b> beneath the development dependencies.
+
+<p>Create a new file, name it <p>gulpfile.js</p>. This file is the entry point for Gulp, here’s where you will be writing all the code to automate tasks.</p>
+
+```js
+	Sample task:
+
+	var gulp = require('gulp');
+
+	gulp.task('default', function () {
+  		console.log('This is gulp task!!!');
+	});
+
+	Check the console for the output
+```
