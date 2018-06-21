@@ -169,13 +169,37 @@ The inject task with <b>'copy'</b> dependency adds the css reference link to the
 <b>The task :</b>
 
 ```js
+	
 	gulp.task('inject', ['copy'], function(){
-    var css = gulp.src(paths.tmpCSS);
-    var js = gulp.src(paths.tmpJS);
+    	var css = gulp.src(paths.tmpCSS);
+    	var js = gulp.src(paths.tmpJS);
 
-    return gulp.src(paths.tmpIndex)
-    .pipe(inject( css, { relative:true } ))
-    .pipe(inject( js, { relative:true } ))
-    .pipe(gulp.dest(paths.tmp));
-});
+    	return gulp.src(paths.tmpIndex)
+    	.pipe(inject( css, { relative:true } ))
+    	.pipe(inject( js, { relative:true } ))
+    	.pipe(gulp.dest(paths.tmp));
+	});
+```
+
+<p>You’ve added the <b>‘copy’</b> task as a dependency for the <b>‘inject’</b> task. Gulp will first copy all the files to the tmp directory, only then will it do the injecting. Let’s break this down. You’re placing the <b>gulp.src</b> of the files copied to the tmp folder into two respective variables. One for the CSS, the other for the JavaScript files. In the return statement you grab the <b>index.html</b> which has already been piped to <b>tmp</b> with the <b>‘copy’</b> task and <b>.pipe()</b> the <b>inject()</b> function with the variables where you placed the respective files from the tmp directory. The second parameter you pass to the inject() function is an options object. Here, <b>relative:true means that the file paths to be referenced in the index.html will be relative.</b></p>
+
+Now look at the <b>index.html</b> of <b>tmp</b> folder. The links are added automatically in the index.html.
+
+```js
+	<!DOCTYPE html>
+	<html>
+	  <head>
+	    <!-- tmp/index.html -->
+	  
+	    <!-- inject:css -->
+	    <link rel="stylesheet" href="style.css">
+	    <!-- endinject -->
+	  </head>
+	  <body>
+
+	    <!-- inject:js -->
+	    <script src="script.js"></script>
+	    <!-- endinject -->
+	  </body>
+	</html>
 ```
