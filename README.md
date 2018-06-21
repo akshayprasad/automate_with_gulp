@@ -60,7 +60,7 @@
 
 Installing it with the <b>--save-dev</b> flag will include it in the <b>package.json</b> beneath the development dependencies.
 
-<p>Create a new file, name it <p>gulpfile.js</p>. This file is the entry point for Gulp, here’s where you will be writing all the code to automate tasks.</p>
+<p>Create a new file, name it <b>gulpfile.js</b>. This file is the entry point for Gulp, here’s where you will be writing all the code to automate tasks.</p>
 
 ```js
 	Sample task:
@@ -71,5 +71,111 @@ Installing it with the <b>--save-dev</b> flag will include it in the <b>package.
   		console.log('This is gulp task!!!');
 	});
 
+	Run 'gulp default' in command prompt
 	Check the console for the output
+```
+
+
+## Follow the structure:
+
+<p>Create the <b>src</b> folder, but <b>do not</b> create the <b>dist nor the tmp</b> folder yet. You will see a bit further down how you can create it dynamically and incorporate it into an automated task. Let’s add some files to the src folder, to finally have something to play with. An <b>index.html</b>, a <b>script.js</b> and a <b>style.css</b> should be more than enough. These will serve as your source files, the only files you will be editing. Gulp will handle everything else.</p>
+
+
+## Folder structure:
+
+<p>First of all you need a <b>paths</b> variable to store all the file and directory paths of your project. Place this right under where you required gulp.</p>
+
+```js
+
+	// gulpfile.js
+	var gulp = require('gulp');
+	
+	var paths = {
+  		src: 'src/**/*',
+  		srcHTML: 'src/**/*.html',
+  		srcCSS: 'src/**/*.css',
+  		srcJS: 'src/**/*.js',
+
+  		tmp: 'tmp',
+  		tmpIndex: 'tmp/index.html',
+  		tmpCSS: 'tmp/**/*.css',
+  		tmpJS: 'tmp/**/*.js',
+
+  		dist: 'dist',
+  		distIndex: 'dist/index.html',
+  		distCSS: 'dist/**/*.css',
+  		distJS: 'dist/**/*.js'
+	};
+
+
+```
+
+## Set up the HTML task
+<p>Now you need to create a task to copy all HTML files from the <b>src</b> directory to the <b>tmp</b> directory where you’ll be running the web server.</p>
+
+```js
+
+	gulp.task('html', function () {
+  		return gulp.src(paths.srcHTML).pipe(gulp.dest(paths.tmp));
+	});
+
+```
+
+##  Set up the CSS task
+<p>Just a like html task we do it for css</p>
+
+```js
+	gulp.task('css', function () {
+  		return gulp.src(paths.srcCSS).pipe(gulp.dest(paths.tmp));
+	});
+```
+
+## Set up the JavaScript task
+
+<p>Just a like html task we do it for js</p>
+
+```js
+	gulp.task('js', function () {
+  		return gulp.src(paths.srcJS).pipe(gulp.dest(paths.tmp));
+	});
+```
+
+## Combine all tasks into one task
+
+<p>Gulp allows you to combine tasks, and add tasks to other tasks as dependencies. This feature is incredibly useful because you can tell Gulp to run and complete certain tasks before even starting other tasks.</p>
+
+```js
+	gulp.task('copy', ['html', 'css', 'js']);
+```
+
+### Important
+<ul>
+	<li>The <b>tmp</b> directory is created dynamically.</li>
+	<li>The <b>tmp</b> directory contains the same files you have in the src directory. </li>
+	<li>The <b>.pipe()</b> command has copied files from the source to the given destination.</li>
+</ul>
+
+## Inject files into the index.html
+The inject task with <b>'copy'</b> dependency adds the css reference link to the index file of <b>tmp</b> and js reference link to the index file of <b>tmp</b>.
+
+```js
+	// Install the plugin to achieve the task
+	npm install gulp-inject --save-dev
+
+	//Add the plugin to the gulpfile.js
+	var inject = require('gulp-inject');
+```
+
+<b>The task :</b>
+
+```js
+	gulp.task('inject', ['copy'], function(){
+    var css = gulp.src(paths.tmpCSS);
+    var js = gulp.src(paths.tmpJS);
+
+    return gulp.src(paths.tmpIndex)
+    .pipe(inject( css, { relative:true } ))
+    .pipe(inject( js, { relative:true } ))
+    .pipe(gulp.dest(paths.tmp));
+});
 ```
